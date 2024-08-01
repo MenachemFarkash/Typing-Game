@@ -735,12 +735,12 @@ PrefabInstance:
     - target: {fileID: 7714345815451802382, guid: 53ef1aaf91939af4ca215f702b666021,
         type: 3}
       propertyPath: word
-      value: Bose
+      value: Engine
       objectReference: {fileID: 0}
     - target: {fileID: 7714345815451802382, guid: 53ef1aaf91939af4ca215f702b666021,
         type: 3}
       propertyPath: activationLetter
-      value: 66
+      value: 69
       objectReference: {fileID: 0}
     - target: {fileID: 7875428110830534480, guid: 53ef1aaf91939af4ca215f702b666021,
         type: 3}
@@ -998,6 +998,7 @@ MonoBehaviour:
   wordToType: []
   initialsToAttack: 
   focusedComponent: {fileID: 0}
+  isFocused: 0
   currentLetterIndex: 0
   lastLetterTyped: 
   cubesContainer: {fileID: 1504515357}

@@ -18,6 +18,7 @@ public class TypingEngine : MonoBehaviour {
     private List<string> lettersArray;
 
     public TextComponent focusedComponent;
+    public bool isFocused = false;
 
 
     public int currentLetterIndex;
@@ -31,12 +32,10 @@ public class TypingEngine : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        wordToType = new List<string> { };
-        currentLetterIndex = 0;
         lettersArray = new List<string>();
+
+        ResetForNextWord();
         PopulateLettersArray();
-
-
     }
 
     // Update is called once per frame
@@ -45,16 +44,21 @@ public class TypingEngine : MonoBehaviour {
             lastLetterTyped = Input.inputString;
             for (int i = 0; i < lettersArray.Count; i++) {
                 if (lastLetterTyped.Equals(lettersArray[i])) {
+                    if (!isFocused) {
 
-                    if (CheckIfLetterInInitials(lastLetterTyped.ToCharArray()[0])) {
+                        if (CheckIfLetterInInitials(lastLetterTyped.ToCharArray()[0])) {
 
-                        focusedComponent = FindCubeWithInitial(lastLetterTyped.ToCharArray()[0]);
-                        focusedComponent.SetWordAsFocused();
+                            focusedComponent = FindCubeWithInitial(lastLetterTyped.ToCharArray()[0]);
+                            focusedComponent.SetWordAsFocused();
 
-                        SetWordAsWordToType();
-
-                    };
-                    return;
+                            SetWordAsWordToType();
+                            isFocused = true;
+                            TypeLetter(focusedComponent.activationLetter.ToString());
+                            return;
+                        };
+                    } else {
+                        TypeLetter(lastLetterTyped); break;
+                    }
                 }
             }
         }
@@ -76,26 +80,27 @@ public class TypingEngine : MonoBehaviour {
     }
 
     public void TypeLetter(string letter) {
-        if (letter == wordToType[currentLetterIndex]) {
+        if (wordToType.Count - 1 >= currentLetterIndex && letter == wordToType[currentLetterIndex]) {
             print(wordToType[currentLetterIndex]);
-            currentLetterIndex++;
+            focusedComponent.RemoveLetterFromWord(currentLetterIndex);
+            print("Incrementing");
+
+
         }
     }
-
     public bool CheckIfLetterInInitials(char letter) {
         for (int i = 0; i < initialsToAttack.Count; i++) {
             if (initialsToAttack[i] == letter) {
-                print(letter + " Found In Initials");
                 return true;
             }
         }
-        print(letter + " Not Found In Initials");
         return false;
     }
 
     public TextComponent FindCubeWithInitial(char initial) {
         foreach (TextComponent comp in cubesContainer.GetComponentsInChildren<TextComponent>()) {
             if (comp.activationLetter == initial) {
+                RemoveCharFromInitialsToAttack(comp.activationLetter);
                 return comp;
             }
         }
@@ -111,7 +116,15 @@ public class TypingEngine : MonoBehaviour {
     public void AddCharToInitialsToAttack(char charToAdd) {
         initialsToAttack.Add(charToAdd);
     }
-    public void RemoveCharToInitialsToAttack(char charToRemove) {
-        initialsToAttack.Add(charToRemove);
+    public void RemoveCharFromInitialsToAttack(char charToRemove) {
+        initialsToAttack.Remove(charToRemove);
+    }
+    public void ResetForNextWord() {
+        wordToType = new List<string> { };
+        focusedComponent = null;
+        currentLetterIndex = 0;
+        isFocused = false;
+        lastLetterTyped = null;
     }
 }
+

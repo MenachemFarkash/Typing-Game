@@ -7,6 +7,7 @@ public class TextComponent : MonoBehaviour {
     public char[] brokenWord;
     public TextMeshPro text;
     public bool isFocused;
+    public int wordLength;
 
     TypingEngine typingEngine;
 
@@ -14,6 +15,7 @@ public class TextComponent : MonoBehaviour {
     private void Start() {
         text.text = word;
         brokenWord = word.ToCharArray();
+        wordLength = brokenWord.Length - 1;
 
         typingEngine = TypingEngine.instance;
 
@@ -29,12 +31,21 @@ public class TextComponent : MonoBehaviour {
         }
     }
 
-    public void RemoveLetterFromWord() {
-        brokenWord = brokenWord.ToString().Remove(0, 1).ToCharArray();
+    public void RemoveLetterFromWord(int indexToRemove) {
+        if (indexToRemove < wordLength) {
+
+            brokenWord[indexToRemove] = '_';
+            string charsStr = new string(brokenWord);
+            text.text = charsStr;
+            typingEngine.currentLetterIndex++;
+        } else {
+            Destroy(gameObject);
+            typingEngine.ResetForNextWord();
+        }
     }
 
     public void SetWordAsFocused() {
-        print("This cube is now the focus");
+        isFocused = true;
     }
 
     public void AbbortFromWord() {
